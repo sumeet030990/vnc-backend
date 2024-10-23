@@ -1,69 +1,55 @@
 package com.vnc.officeManagementApp.Config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
-    UserDetailsService userDetailsService;
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
 
     /**
-     * SecurityFilterChain securityFilterChain: menthod can have any name, this method is used to define the configurations of the auth
-     * @param httpSecurity
-     * @return
-     * @throws Exception
+     * SecurityFilterChain defines the security configuration for HTTP requests.
+     * It allows public access to `/api/register/` and `/api/login/`, while requiring authentication for all other endpoints.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        log.info("In securityFilterChain");
+        // Disable CSRF as we are working with JWT, which handles cross-site requests.
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
-            httpSecurity.csrf(customizer -> customizer.disable());
-            httpSecurity.authorizeHttpRequests(request -> request
-                    .requestMatchers("login", "register")
-                    .permitAll()
-                    .anyRequest().authenticated());
+        // CORS configuration
+//        httpSecurity.cors();  // Make sure you have a CorsConfigurationSource bean defined
 
-            httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-            return httpSecurity.build();
+        // Define URL authorization rules
+        httpSecurity.authorizeHttpRequests(request -> request
+                .requestMatchers("/api/register/**", "/api/login/**")   // Publicly accessible endpoints
+                .permitAll()  // Allow access without authentication
+                .anyRequest()  // All other requests
+                .authenticated());  // Require authentication
+
+        // Set session management to stateless as we're using JWT tokens
+        httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // Set the custom authentication provider and JWT filter
+        httpSecurity.authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Build the security configuration
+        return httpSecurity.build();
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder(12));
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        
-        return daoAuthenticationProvider;
-    }
-
-
-//    @Bean
-//    public UserDetailsService userDetailsService () {
-//        UserDetails userDetails = User
-//                .withDefaultPasswordEncoder()
-//                .username("sumeet")
-//                .password("password")
-//                .roles("ADMIN")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(userDetails);
-//    }
 }

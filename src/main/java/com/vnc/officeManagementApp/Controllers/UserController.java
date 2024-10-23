@@ -1,7 +1,6 @@
 package com.vnc.officeManagementApp.Controllers;
 
 import com.vnc.officeManagementApp.Models.Users;
-import com.vnc.officeManagementApp.Services.UserAuthService;
 import com.vnc.officeManagementApp.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

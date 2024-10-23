@@ -1,6 +1,5 @@
 package com.vnc.officeManagementApp.Services;
 
-import com.vnc.officeManagementApp.Models.AuthUser;
 import com.vnc.officeManagementApp.Models.UserAuth;
 import com.vnc.officeManagementApp.Repository.UserAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +13,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserAuthService implements UserDetailsService {
+public class UserAuthService{
     @Autowired
-    UserAuthRepository userAuthRepository;
+    private UserAuthRepository userAuthRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder =new BCryptPasswordEncoder(12);
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    JwtService jwtService;
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserAuth userAuth = userAuthRepository.findByUserName(username);
-        if(userAuth == null) {
-            throw new UsernameNotFoundException("User Not Found");
-        }
-
-        return new AuthUser(userAuth);
-    }
 
     public UserAuth storeUserAuth(UserAuth userAuth){
         try {
@@ -44,14 +31,10 @@ public class UserAuthService implements UserDetailsService {
         }
     }
 
-
-    public String verifyUsers(UserAuth userAuth) throws Exception {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userAuth.getUserName(), userAuth.getPassword()));
-
-        if(authentication.isAuthenticated()) {
-            return jwtService.generateToken(userAuth.getUserName());
-        }
-
-        throw new Exception("Invalid Credentials");
+    public Authentication authenticate(UserAuth userAuth) {
+        return authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userAuth.getUsername(), userAuth.getPassword())
+        );
     }
+
 }

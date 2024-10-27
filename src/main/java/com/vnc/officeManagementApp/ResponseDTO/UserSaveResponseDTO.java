@@ -8,9 +8,11 @@ import lombok.Data;
 public class UserSaveResponseDTO {
     private UserAuth userAuth;
     private Users users;
+    private String jwtToken;
 
-    public UserSaveResponseDTO(UserAuth userAuth, Users users) {
+    public UserSaveResponseDTO(UserAuth userAuth, Users users, String jwtToken) {
         this.userAuth = userAuth;
         this.users = users;
+        this.jwtToken = jwtToken;
     }
 }

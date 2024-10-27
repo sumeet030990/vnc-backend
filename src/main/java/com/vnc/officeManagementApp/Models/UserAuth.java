@@ -16,17 +16,23 @@ public class UserAuth implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
+
+    @Column(unique = true, nullable=false)
     private String userName;
+
+    @Column(nullable=false)
     private String password;
+
+    @Column(columnDefinition="tinyint(1) default 1")
     private Boolean isEnabled;
 
-    @Enumerated(EnumType.STRING)
-    private RolesEnum rolesEnum;
+    @OneToOne(mappedBy = "userAuth")
+    private Users users;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(rolesEnum.name()));
+        return null;
     }
 
     @Override

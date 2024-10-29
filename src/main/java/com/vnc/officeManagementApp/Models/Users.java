@@ -1,5 +1,6 @@
 package com.vnc.officeManagementApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class Users {
     private Roles roles;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore  // Prevent infinite recursion during serialization
     private UserAuth userAuth;
 
 }

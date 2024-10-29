@@ -3,11 +3,14 @@ package com.vnc.officeManagementApp.Services;
 import com.vnc.officeManagementApp.Models.UserAuth;
 import com.vnc.officeManagementApp.Repository.UserAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserAuthService{
+public class UserAuthService implements UserDetailsService{
     @Autowired
     private UserAuthRepository userAuthRepository;
 
@@ -20,5 +23,12 @@ public class UserAuthService{
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserAuth userAuth = userAuthRepository.findByUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return userAuth;
     }
 }

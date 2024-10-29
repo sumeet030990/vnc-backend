@@ -1,12 +1,16 @@
 package com.vnc.officeManagementApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -17,22 +21,28 @@ public class UserAuth implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable=false)
+    @Column(unique = true, nullable = false)
     private String userName;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
+    @JsonIgnore // Prevents password from being serialized i.e. it ll not come in responses
     private String password;
 
-    @Column(columnDefinition="tinyint(1) default 1")
+    @Column(columnDefinition = "tinyint(1) default 1")
     private Boolean isEnabled;
 
     @OneToOne(mappedBy = "userAuth")
+    @ToString.Exclude // This will prevent infinite recursion
     private Users users;
 
-
     @Override
+    @JsonIgnore // authorities aren’t needed, hide them too
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        if (users != null && users.getRoles() != null) {
+            String roleName = users.getRoles().getName();
+            return List.of(new SimpleGrantedAuthority(roleName));
+        }
+        return Collections.emptyList();
     }
 
     @Override

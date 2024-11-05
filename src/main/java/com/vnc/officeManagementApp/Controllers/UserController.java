@@ -36,8 +36,7 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("")
-    public SuccessResponseDTO store(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
+    private SuccessResponseDTO saveUserDataUser(UserSaveDTO userSaveDTO) throws Exception {
         try {
             Optional<Roles> roleOptional = rolesService.findById(userSaveDTO.getRoleId());
 
@@ -46,22 +45,64 @@ public class UserController {
             Roles role = roleOptional.get(); // Get the actual Role object
 
             UserAuth userAuthResult = null;
-            UserAuth userAuth = null;
+            UserAuth userAuthObjectForSaving = null;
 
             if (userSaveDTO.getUserName() != null) {
-                userAuth = userAuthService.createUserAuthObjectFromRequest(userSaveDTO);
-                userAuthResult = userAuthService.storeUserAuth(userAuth);
+                userAuthObjectForSaving = userAuthService.createUserAuthObjectFromRequest(userSaveDTO);
+                userAuthResult = userAuthService.storeUserAuth(userAuthObjectForSaving);
             }
 
-            Users users = userService.createUserObjectFromRequest(userSaveDTO, role, userAuth);
+            Users users = userService.createUserObjectFromRequest(userSaveDTO, role, userAuthObjectForSaving);
             Users usersResults = userService.storeUsers(users);
-
             UserSaveResponseDTO userSaveResponseDTO = new UserSaveResponseDTO(userAuthResult, usersResults, null);
-            SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(userSaveResponseDTO);
+
+            SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(HttpStatus.CREATED, userSaveResponseDTO);
+
+            return successResponseDTO;
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
+    }
+
+    @PostMapping("")
+    public SuccessResponseDTO store(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
+        try {
+            SuccessResponseDTO result = saveUserDataUser(userSaveDTO);
+
+            return result;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public SuccessResponseDTO update(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
+        try {
+            Optional<Roles> roleOptional = rolesService.findById(userSaveDTO.getRoleId());
+
+            if (roleOptional.isEmpty())
+                throw new RuntimeException("Invalid Role");
+
+            SuccessResponseDTO successResponseDTO = new SuccessResponseDTO("");
 
             return successResponseDTO;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
+
+    @DeleteMapping("/{id}")
+    public SuccessResponseDTO destroy(@PathVariable Long id) throws Exception {
+        try {
+            userService.deleteuser(id);
+
+            return new SuccessResponseDTO("User successfully Deleted");
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }

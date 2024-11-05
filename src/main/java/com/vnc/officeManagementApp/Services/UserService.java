@@ -76,4 +76,26 @@ public class UserService {
         return userRepository.save(users);
     }
 
+    /**
+     * Delete user by user Id
+     * 
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    public boolean deleteuser(Long userId) throws Exception {
+        try {
+            Optional<Users> users = userRepository.findById(userId);
+
+            if (!users.isEmpty()) {
+                userRepository.deleteById(userId);
+                return true;
+            }
+
+            throw new Exception("User not found");
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }

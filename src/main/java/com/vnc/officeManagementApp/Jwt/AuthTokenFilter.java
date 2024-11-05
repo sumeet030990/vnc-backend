@@ -28,7 +28,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        System.out.println("==== inside AuthTokenFilter@doFilterInternal");
         String requestURI = request.getRequestURI();
         // Skip JWT validation for public routes
         if (requestURI.equals("/login") || requestURI.equals("/register")) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class JwtUtils {
@@ -20,8 +21,8 @@ public class JwtUtils {
     @Value("${spring.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${spring.app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    @Value("${spring.app.jwtExpirationDays}")
+    private int jwtExpirationDays;
 
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -33,7 +34,9 @@ public class JwtUtils {
     }
 
     public String generateTokenFromUsername(UserDetails userDetails) {
+        long jwtExpirationMs = TimeUnit.DAYS.toMillis(jwtExpirationDays);
         String username = userDetails.getUsername();
+
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
@@ -55,7 +58,6 @@ public class JwtUtils {
 
     public boolean validateJwtToken(String authToken) {
         try {
-            System.out.println("Validate");
             Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(authToken);
             return true;
         } catch (MalformedJwtException e) {

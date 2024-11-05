@@ -5,10 +5,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +38,13 @@ public class UserAuth implements UserDetails {
     @ToString.Exclude // This will prevent infinite recursion
     private Users users;
 
+    @CreationTimestamp
+    private LocalDateTime createdDateTime;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedDateTime;
+
+    // ====================== JWT ======================
     @Override
     @JsonIgnore // authorities aren’t needed, hide them too
     public Collection<? extends GrantedAuthority> getAuthorities() {

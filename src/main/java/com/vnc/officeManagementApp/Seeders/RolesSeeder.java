@@ -7,14 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RolesSeeders {
+public class RolesSeeder {
     @Bean
-    CommandLineRunner initDatabase(RolesRepository rolesRepository) {
+    CommandLineRunner initRoleSeeder(RolesRepository rolesRepository) {
         return args -> {
-            rolesRepository.save(new Roles(1L,"admin", "ADMIN"));
-            rolesRepository.save(new Roles(2L,"transporter", "TRANSPORTER"));
-            rolesRepository.save(new Roles(3L,"seller", "SELLER"));
-            rolesRepository.save(new Roles(4L,"buyer", "BUYER"));
+            rolesRepository.save(new Roles(1L, "admin", "ADMIN"));
+            rolesRepository.save(new Roles(2L, "transporter", "TRANSPORTER"));
+            rolesRepository.save(new Roles(3L, "seller", "SELLER"));
+            rolesRepository.save(new Roles(4L, "buyer", "BUYER"));
         };
     }
 }

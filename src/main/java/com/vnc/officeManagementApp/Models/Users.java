@@ -1,5 +1,10 @@
 package com.vnc.officeManagementApp.Models;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -11,7 +16,7 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String firstName;
     private String lastName;
     private String contactNumber;
@@ -21,7 +26,13 @@ public class Users {
     private Roles roles;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JsonIgnore  // Prevent infinite recursion during serialization
+    @JsonIgnore // Prevent infinite recursion during serialization
     private UserAuth userAuth;
+
+    @CreationTimestamp
+    private LocalDateTime createdDateTime;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedDateTime;
 
 }

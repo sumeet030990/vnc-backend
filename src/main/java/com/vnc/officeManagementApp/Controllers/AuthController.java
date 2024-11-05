@@ -84,7 +84,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @Transactional
-    public ResponseEntity<?> store(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
+    public SuccessResponseDTO store(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
         try {
             Optional<Roles> roleOptional = rolesService.findById(userSaveDTO.getRoleId());
 
@@ -92,17 +92,8 @@ public class AuthController {
                 throw new RuntimeException("Invalid Role");
             Roles role = roleOptional.get(); // Get the actual Role object
 
-            UserAuth userAuth = new UserAuth();
-            userAuth.setUserName(userSaveDTO.getUserName());
-            userAuth.setPassword(userSaveDTO.getPassword());
-            userAuth.setIsEnabled(true);
-
-            Users users = new Users();
-            users.setFirstName(userSaveDTO.getFirstName());
-            users.setLastName(userSaveDTO.getLastName());
-            users.setContactNumber(userSaveDTO.getContactNumber());
-            users.setRoles(role);
-            users.setUserAuth(userAuth);
+            UserAuth userAuth = userAuthService.createUserAuthObjectFromRequest(userSaveDTO);
+            Users users = userService.createUserObjectFromRequest(userSaveDTO, role, userAuth);
 
             UserAuth userAuthResult = userAuthService.storeUserAuth(userAuth);
             Users usersResults = userService.storeUsers(users);
@@ -112,12 +103,10 @@ public class AuthController {
 
             SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(userSaveResponseDTO);
 
-            return ResponseEntity.ok(successResponseDTO);
+            return successResponseDTO;
         } catch (Exception exception) {
-            ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(exception.getMessage());
             logger.warn("==== AuthController@store Error: " + exception.getMessage());
-
-            return new ResponseEntity<Object>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new Exception(exception.getMessage());
         }
     }
 }

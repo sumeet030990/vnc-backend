@@ -12,6 +12,7 @@ import com.vnc.officeManagementApp.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,17 +37,16 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    private SuccessResponseDTO saveUserDataUser(UserSaveDTO userSaveDTO) throws Exception {
+    @PostMapping("")
+    @Transactional
+    public SuccessResponseDTO store(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
         try {
-            Optional<Roles> roleOptional = rolesService.findById(userSaveDTO.getRoleId());
-
-            if (roleOptional.isEmpty())
-                throw new RuntimeException("Invalid Role");
-            Roles role = roleOptional.get(); // Get the actual Role object
+            Roles role = validateRole(userSaveDTO.getRoleId());
 
             UserAuth userAuthResult = null;
             UserAuth userAuthObjectForSaving = null;
 
+            // if user name is present means user login
             if (userSaveDTO.getUserName() != null) {
                 userAuthObjectForSaving = userAuthService.createUserAuthObjectFromRequest(userSaveDTO);
                 userAuthResult = userAuthService.storeUserAuth(userAuthObjectForSaving);
@@ -54,8 +54,9 @@ public class UserController {
 
             Users users = userService.createUserObjectFromRequest(userSaveDTO, role, userAuthObjectForSaving);
             Users usersResults = userService.storeUsers(users);
-            UserSaveResponseDTO userSaveResponseDTO = new UserSaveResponseDTO(userAuthResult, usersResults, null);
 
+            // save done, return the response now
+            UserSaveResponseDTO userSaveResponseDTO = new UserSaveResponseDTO(userAuthResult, usersResults, null);
             SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(HttpStatus.CREATED, userSaveResponseDTO);
 
             return successResponseDTO;
@@ -63,34 +64,54 @@ public class UserController {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
-
-    }
-
-    @PostMapping("")
-    public SuccessResponseDTO store(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
-        try {
-            SuccessResponseDTO result = saveUserDataUser(userSaveDTO);
-
-            return result;
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
     }
 
     @PutMapping("/{id}")
-    public SuccessResponseDTO update(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
+    @Transactional
+    public SuccessResponseDTO update(@RequestBody UserSaveDTO userSaveDTO, @PathVariable("id") Long userId)
+            throws Exception {
         try {
-            Optional<Roles> roleOptional = rolesService.findById(userSaveDTO.getRoleId());
+            Optional<Users> usersOptional = userService.findUserById(userId);
+            if (usersOptional.isEmpty())
+                throw new RuntimeException("Invalid User");
 
-            if (roleOptional.isEmpty())
-                throw new RuntimeException("Invalid Role");
+            Users userData = usersOptional.get(); // Get the actual User object
 
-            SuccessResponseDTO successResponseDTO = new SuccessResponseDTO("");
+            Roles role = validateRole(userSaveDTO.getRoleId());
+
+            UserAuth userAuthResult = null;
+            UserAuth userAuthObjectForSaving = null;
+
+            // if user name is present means user login
+            if (userSaveDTO.getUserName() != null) {
+                // handle userAuth updation
+                UserAuth userAuth = userData.getUserAuth();
+
+                userSaveDTO.setUserAuthId(userAuth.getId());
+                userAuthObjectForSaving = userAuthService.createUserAuthObjectFromRequest(userSaveDTO);
+                userAuthObjectForSaving.setCreatedDateTime(userAuth.getCreatedDateTime());
+
+                userAuthResult = userAuthService.storeUserAuth(userAuthObjectForSaving);
+            }
+
+            // handle User updation
+            userSaveDTO.setUserId(userId);
+            Users users = userService.createUserObjectFromRequest(userSaveDTO, role, userAuthObjectForSaving);
+            users.setCreatedDateTime(userData.getCreatedDateTime());
+            Users usersResults = userService.storeUsers(users);
+
+            // save done, return the response now
+            UserSaveResponseDTO userSaveResponseDTO = new UserSaveResponseDTO(userAuthResult, usersResults, null);
+            SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(HttpStatus.OK, userSaveResponseDTO);
 
             return successResponseDTO;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    private Roles validateRole(Long roleId) {
+        return rolesService.findById(roleId).orElseThrow(() -> new RuntimeException("Invalid Role"));
     }
 
     @DeleteMapping("/{id}")

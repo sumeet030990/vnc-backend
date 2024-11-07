@@ -35,8 +35,9 @@ public class UserAuthService implements UserDetailsService {
     }
 
     /**
-     * Create UserAuth Model object for further processing
-     * userd in AuthController@register & UserController@store
+     * Create/Update UserAuth Model object for further processing
+     * userd in AuthController@register & UserController@store &
+     * UserController@update
      * 
      * @param userSaveDTO
      * @return
@@ -48,6 +49,11 @@ public class UserAuthService implements UserDetailsService {
             userAuth.setUserName(userSaveDTO.getUserName());
             userAuth.setPassword(userSaveDTO.getPassword());
             userAuth.setIsEnabled(true);
+
+            // check if its for update
+            if (userSaveDTO.getUserAuthId() != null) {
+                userAuth.setId(userSaveDTO.getUserAuthId()); // setting id, so as to update
+            }
 
             return userAuth;
         } catch (Exception e) {

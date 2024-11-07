@@ -55,11 +55,16 @@ public class UserService {
             users.setLastName(userSaveDTO.getLastName());
             users.setContactNumber(userSaveDTO.getContactNumber());
             users.setRoles(role);
+            users.setAddress(userSaveDTO.getAddress());
 
             if (userAuth != null) {
                 users.setUserAuth(userAuth);
             }
 
+            // handle Updation
+            if (userSaveDTO.getUserId() != null) {
+                users.setId(userSaveDTO.getUserId());
+            }
             return users;
         } catch (Exception e) {
             throw new Exception(e.getMessage());

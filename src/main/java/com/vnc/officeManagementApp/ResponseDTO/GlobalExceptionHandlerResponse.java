@@ -1,4 +1,5 @@
 package com.vnc.officeManagementApp.ResponseDTO;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,6 +20,7 @@ public class GlobalExceptionHandlerResponse {
         body.put("message", ex.getMessage());
         body.put("path", request.getDescription(false));
 
+        logError(ex);
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -30,6 +32,15 @@ public class GlobalExceptionHandlerResponse {
         body.put("message", ex.getMessage());
         body.put("path", request.getDescription(false));
 
+        logError(ex);
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private void logError(Exception ex) {
+        System.out.println("=============Message=============");
+        System.out.println(ex.getMessage());
+        System.out.println("=============StackTrace=============");
+        System.out.println(ex.getStackTrace());
+        System.out.println("=============StackTrace End=============");
     }
 }

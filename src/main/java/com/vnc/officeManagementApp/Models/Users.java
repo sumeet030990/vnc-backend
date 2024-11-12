@@ -6,7 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.context.annotation.Lazy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -33,7 +34,7 @@ public class Users {
     private Roles roles;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JsonIgnore // Prevent infinite recursion during serialization
+    @JsonIgnoreProperties({ "users" }) // Prevent infinite recursion during serialization
     @Lazy
     private UserAuth userAuth;
 

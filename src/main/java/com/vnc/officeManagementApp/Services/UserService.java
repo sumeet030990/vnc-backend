@@ -33,8 +33,24 @@ public class UserService {
      * @param userId
      * @return Optional<Users>
      */
-    public Optional<Users> findUserById(Long userId) {
-        return userRepository.findById(userId);
+    public Users findUserById(Long userId) throws Exception {
+        try {
+            Optional<Users> userOptional = userRepository.findById(userId);
+            if (userOptional.isEmpty()) {
+                throw new Exception("User Not Found");
+            }
+
+            Users users = userOptional.get();
+            UserAuth userAuth = users.getUserAuth();
+
+            if (userAuth != null && userAuth.getUsername() != null) {
+                users.setUserAuth(userAuth);
+
+            }
+            return users;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     /**

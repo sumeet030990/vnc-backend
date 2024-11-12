@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -66,16 +65,30 @@ public class UserController {
         }
     }
 
+    /**
+     * Show Users
+     * 
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/{id}")
+    public SuccessResponseDTO show(@PathVariable Long id) throws Exception {
+        try {
+            Users users = userService.findUserById(id);
+
+            return new SuccessResponseDTO(users);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     @Transactional
     public SuccessResponseDTO update(@RequestBody UserSaveDTO userSaveDTO, @PathVariable("id") Long userId)
             throws Exception {
         try {
-            Optional<Users> usersOptional = userService.findUserById(userId);
-            if (usersOptional.isEmpty())
-                throw new RuntimeException("Invalid User");
-
-            Users userData = usersOptional.get(); // Get the actual User object
+            Users userData = userService.findUserById(userId);
 
             Roles role = validateRole(userSaveDTO.getRoleId());
 
@@ -96,15 +109,18 @@ public class UserController {
 
             // handle User updation
             userSaveDTO.setUserId(userId);
-            Users users = userService.createUserObjectFromRequest(userSaveDTO, role, userAuthObjectForSaving);
+            Users users = userService.createUserObjectFromRequest(userSaveDTO, role,
+                    userAuthObjectForSaving);
             users.setCreatedDateTime(userData.getCreatedDateTime());
             Users usersResults = userService.storeUsers(users);
 
             // save done, return the response now
             UserSaveResponseDTO userSaveResponseDTO = new UserSaveResponseDTO(userAuthResult, usersResults, null);
-            SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(HttpStatus.OK, userSaveResponseDTO);
+            SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(HttpStatus.OK,
+                    userSaveResponseDTO);
 
             return successResponseDTO;
+
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

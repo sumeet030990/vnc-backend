@@ -11,10 +11,10 @@ public class RolesSeeder {
     @Bean
     CommandLineRunner initRoleSeeder(RolesRepository rolesRepository) {
         return args -> {
-            rolesRepository.save(new Roles(1L, "admin", "ADMIN"));
-            rolesRepository.save(new Roles(2L, "transporter", "TRANSPORTER"));
-            rolesRepository.save(new Roles(3L, "seller", "SELLER"));
-            rolesRepository.save(new Roles(4L, "buyer", "BUYER"));
+            rolesRepository.save(new Roles(1, "admin", "ADMIN"));
+            rolesRepository.save(new Roles(2, "transporter", "TRANSPORTER"));
+            rolesRepository.save(new Roles(3, "seller", "SELLER"));
+            rolesRepository.save(new Roles(4, "buyer", "BUYER"));
         };
     }
 }

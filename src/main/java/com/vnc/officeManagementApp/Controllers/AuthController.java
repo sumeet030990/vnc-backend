@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class AuthController {
@@ -86,11 +85,7 @@ public class AuthController {
     @Transactional
     public SuccessResponseDTO store(@RequestBody UserSaveDTO userSaveDTO) throws Exception {
         try {
-            Optional<Roles> roleOptional = rolesService.findById(userSaveDTO.getRoleId());
-
-            if (roleOptional.isEmpty())
-                throw new RuntimeException("Invalid Role");
-            Roles role = roleOptional.get(); // Get the actual Role object
+            Roles role = rolesService.findById(userSaveDTO.getRoleId()); // Get the actual Role object
 
             UserAuth userAuth = userAuthService.createUserAuthObjectFromRequest(userSaveDTO);
             Users users = userService.createUserObjectFromRequest(userSaveDTO, role, userAuth);

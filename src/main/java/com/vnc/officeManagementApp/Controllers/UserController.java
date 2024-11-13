@@ -126,8 +126,12 @@ public class UserController {
         }
     }
 
-    private Roles validateRole(Long roleId) {
-        return rolesService.findById(roleId).orElseThrow(() -> new RuntimeException("Invalid Role"));
+    private Roles validateRole(Integer roleId) throws Exception {
+        try {
+            return rolesService.findById(roleId);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

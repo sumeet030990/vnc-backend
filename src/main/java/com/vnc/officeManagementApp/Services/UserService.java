@@ -69,6 +69,7 @@ public class UserService {
             Users users = new Users();
             users.setFirstName(userSaveDTO.getFirstName());
             users.setLastName(userSaveDTO.getLastName());
+            users.setCompanyName(userSaveDTO.getCompanyName());
             users.setContactNumber(userSaveDTO.getContactNumber());
             users.setRoles(role);
             users.setAddress(userSaveDTO.getAddress());

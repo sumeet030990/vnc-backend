@@ -24,12 +24,18 @@ public class RolesService {
 
     /**
      * Fetch Roles By its Id
+     * 
      * @param id
      * @return Roles
      */
-    public Optional<Roles> findById(Long id) {
+    public Roles findById(Integer id) {
         try {
-         return rolesRepository.findById(id);
+            Optional<Roles> rolesOptional = rolesRepository.findById(id);
+            if (rolesOptional.isEmpty()) {
+                throw new Exception("Invalid Role");
+            }
+
+            return rolesOptional.get();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

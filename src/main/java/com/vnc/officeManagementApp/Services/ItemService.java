@@ -30,7 +30,7 @@ public class ItemService {
      * @return
      * @throws Exception
      */
-    public Items findById(Long id) throws Exception {
+    public Items findById(Integer id) throws Exception {
         Optional<Items> optionalItem = itemRepository.findById(id);
         if (optionalItem.isEmpty())
             throw new Exception("Item Not Found");
@@ -53,7 +53,7 @@ public class ItemService {
         }
     }
 
-    public boolean destroy(Long id) throws Exception {
+    public boolean destroy(Integer id) throws Exception {
         try {
             Items items = findById(id);
             if (items != null) {

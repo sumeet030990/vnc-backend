@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.context.annotation.Lazy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -30,15 +29,12 @@ public class Users {
 
     @ManyToOne
     @JoinColumn(name = "role_id")
-    @Lazy
     private Roles roles;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnoreProperties({ "users" }) // Prevent infinite recursion during serialization
-    @Lazy
     private UserAuth userAuth;
 
-    @Lazy
     @OneToOne(mappedBy = "users")
     private UserBalance userBalance;
 

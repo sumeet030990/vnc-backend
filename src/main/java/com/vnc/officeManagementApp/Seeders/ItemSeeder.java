@@ -13,8 +13,8 @@ public class ItemSeeder {
     @Bean
     CommandLineRunner initItemSeeder(ItemRepository itemRepository) {
         return args -> {
-            itemRepository.save(new Items(1L, "toor_dal", "Toor Dal"));
-            itemRepository.save(new Items(2L, "chana_dal", "Chana Dal"));
+            itemRepository.save(new Items(1, "toor_dal", "Toor Dal"));
+            itemRepository.save(new Items(2, "chana_dal", "Chana Dal"));
         };
     }
 }

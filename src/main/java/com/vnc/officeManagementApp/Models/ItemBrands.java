@@ -13,7 +13,7 @@ import lombok.Data;
 public class ItemBrands {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false, unique = true)
     private String slug;
@@ -21,9 +21,9 @@ public class ItemBrands {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne()
     private Items items;
 
-    @ManyToOne
+    @ManyToOne()
     private Users users; // this item brand belongs to which user eg: goldMedal belongs to Dayalu
 }

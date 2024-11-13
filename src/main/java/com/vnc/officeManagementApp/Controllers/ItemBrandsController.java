@@ -1,34 +1,33 @@
 package com.vnc.officeManagementApp.Controllers;
 
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.vnc.officeManagementApp.Models.ItemBrands;
+import com.vnc.officeManagementApp.RequestsDTO.ItemBrandsDto;
+import com.vnc.officeManagementApp.ResponseDTO.SuccessResponseDTO;
+import com.vnc.officeManagementApp.Services.ItemBrandsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.vnc.officeManagementApp.Models.Items;
-import com.vnc.officeManagementApp.ResponseDTO.SuccessResponseDTO;
-import com.vnc.officeManagementApp.Services.ItemService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/items")
-public class ItemsController {
+@RequestMapping("/item-brand")
+public class ItemBrandsController {
 
     @Autowired
-    ItemService itemService;
+    ItemBrandsService itemBrandsService;
 
     @GetMapping("")
     public SuccessResponseDTO index() throws Exception {
         try {
-            List<Items> itemsCollection = itemService.fetchAllItems();
-            return new SuccessResponseDTO(itemsCollection);
+            return new SuccessResponseDTO(itemBrandsService.fetchAllItemBrands());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -37,32 +36,33 @@ public class ItemsController {
     @GetMapping("/{id}")
     public SuccessResponseDTO show(@PathVariable Integer id) throws Exception {
         try {
-            Items items = itemService.findById(id);
+            ItemBrands itemBrands = itemBrandsService.findById(id);
 
-            return new SuccessResponseDTO(items);
+            return new SuccessResponseDTO(itemBrands);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
     @PostMapping("")
-    public SuccessResponseDTO store(@RequestBody Items itemsData) throws Exception {
+    public SuccessResponseDTO store(@RequestBody ItemBrandsDto itemBrandsDto) throws Exception {
         try {
-            Items items = itemService.store(itemsData);
+            ItemBrands itemBrands = itemBrandsService.store(itemBrandsDto);
 
-            return new SuccessResponseDTO(items);
+            return new SuccessResponseDTO(itemBrands);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public SuccessResponseDTO update(@RequestBody Items itemsData, @PathVariable Integer id) throws Exception {
+    public SuccessResponseDTO update(@RequestBody ItemBrandsDto itemBrandsData, @PathVariable Integer id)
+            throws Exception {
         try {
-            itemsData.setId(id);
-            Items items = itemService.store(itemsData);
+            itemBrandsData.setId(id);
+            ItemBrands itemBrands = itemBrandsService.store(itemBrandsData);
 
-            return new SuccessResponseDTO(items);
+            return new SuccessResponseDTO(itemBrands);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -71,7 +71,7 @@ public class ItemsController {
     @DeleteMapping("/{id}")
     public SuccessResponseDTO destroy(@PathVariable Integer id) throws Exception {
         try {
-            boolean result = itemService.destroy(id);
+            boolean result = itemBrandsService.destroy(id);
             if (result) {
                 return new SuccessResponseDTO("Item deleted Successfully");
             }

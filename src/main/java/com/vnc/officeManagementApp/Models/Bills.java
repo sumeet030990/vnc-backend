@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.context.annotation.Lazy;
 
 import com.vnc.officeManagementApp.Utils.Enums.Status;
 
@@ -27,16 +26,13 @@ public class Bills {
 
     private Date date;
 
-    @ManyToOne
-    @Lazy
+    @ManyToOne()
     private Users buyersId;
 
-    @ManyToOne
-    @Lazy
+    @ManyToOne()
     private Users sellersId;
 
-    @ManyToOne
-    @Lazy
+    @ManyToOne()
     private Users transportersId;
 
     private String fromAddress;

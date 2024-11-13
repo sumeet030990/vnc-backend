@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.context.annotation.Lazy;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,8 +25,7 @@ public class DailyPriceRecords {
     @ManyToOne
     private ItemBrands itemBrands;
 
-    @ManyToOne
-    @Lazy
+    @ManyToOne()
     private Users users;
 
     @CreationTimestamp

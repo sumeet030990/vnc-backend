@@ -8,9 +8,10 @@ public class UserSaveDTO {
     private Long userAuthId = null;
     private String userName;
     private String password;
-    private Long roleId;
+    private Integer roleId;
     private String firstName;
     private String lastName;
+    private String companyName;
     private String contactNumber;
     private String address;
 

@@ -43,7 +43,7 @@ pytest
 
 To create the MySQL tables, run:
 ```sh
-python3 -m app.config.init_db
+python3 -m database.init_db
 ```
 
 ## Notes

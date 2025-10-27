@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from config.database import Base
-from app.models.user import User
+from database.database import Base
 
 class UserAuth(Base):
     __tablename__ = "user_auth"

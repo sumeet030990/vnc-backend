@@ -3,3 +3,5 @@ uvicorn
 sqlalchemy
 pydantic
 dotenv
+pyjwt
+pwdlib[argon2]

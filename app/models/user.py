@@ -1,7 +1,8 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from database.database import Base
-
+from app.models.user_auth import UserAuth
+from app.models.role import Role
 class User(Base):
     """
     Represents a user associated with a firm, including firm details and authentication relationship.

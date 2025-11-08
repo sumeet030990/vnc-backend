@@ -55,3 +55,35 @@ be/
 - **pyproject.toml**: Linting, formatting, and tool configurations.
 - **.env / .env.example**: Environment variable files.
 - **README.md**: Project documentation.
+
+## Alembic Migration Commands
+
+### Generate a new migration (revision) file
+```
+alembic revision --autogenerate -m "your_message_here"
+```
+
+### Apply migrations (upgrade database to latest revision)
+```
+alembic upgrade head
+```
+
+### Downgrade database (revert last migration)
+```
+alembic downgrade -1
+```
+
+### Downgrade to a specific revision
+```
+alembic downgrade <revision_id>
+```
+
+### Show current revision
+```
+alembic current
+```
+
+### Show migration history
+```
+alembic history
+```

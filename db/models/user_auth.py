@@ -1,10 +1,9 @@
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from sqlalchemy.ext.declarative import declarative_base
+from db.base import Base
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
 
 class UserAuth(Base):
     __tablename__ = 'user_auth'

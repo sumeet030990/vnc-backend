@@ -1,10 +1,9 @@
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from sqlalchemy.ext.declarative import declarative_base
+from db.base import Base
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
 
 class Role(Base):
     __tablename__ = 'roles'

@@ -1,9 +1,7 @@
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
+from db.base import Base
 
 class Item(Base):
     __tablename__ = 'items'

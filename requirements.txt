@@ -1,0 +1,8 @@
+# Add your project dependencies here
+fastapi
+uvicorn
+sqlalchemy
+alembic
+pymysql
+pydantic
+python-dotenv

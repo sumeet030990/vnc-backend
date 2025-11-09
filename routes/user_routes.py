@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
-from app.controllers.user_controller import create_user_controller, get_user_controller
-from app.schemas.response.user import UserResponse
+from app.controllers.user_controller import store_user, show_user
+from app.schemas.response.globalResponse import SuccessResponse, ErrorResponse
+from app.schemas.response.user import  UserResponseBody
 from app.schemas.request.user import UserCreateRequest
 from sqlalchemy.orm import Session
 from db.session import get_db
@@ -8,10 +9,11 @@ from uuid import UUID
 
 user_router = APIRouter(tags=["Users"])
 
-@user_router.post("/users", response_model=UserResponse)
-def create_user_route(payload: UserCreateRequest, db: Session = Depends(get_db)) -> UserResponse:
-    return create_user_controller(payload, db)
+@user_router.post("/users", response_model=SuccessResponse[UserResponseBody] , responses={422: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
+def create_user_route(payload: UserCreateRequest, db: Session = Depends(get_db)) -> SuccessResponse[UserResponseBody]:
+    return store_user(payload, db)
 
-@user_router.get("/users/{user_id}", response_model=UserResponse)
-def get_user_route(user_id: UUID, db: Session = Depends(get_db)):
-    return get_user_controller(user_id, db)
+@user_router.get("/users/{user_id}", response_model=SuccessResponse[UserResponseBody], responses={404: {"model": ErrorResponse}})
+def get_user_route(user_id: UUID, db: Session = Depends(get_db)) -> SuccessResponse[UserResponseBody]:
+    return show_user(user_id, db)
+  

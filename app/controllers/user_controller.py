@@ -11,7 +11,7 @@ from uuid import UUID
 router = APIRouter()
 
 # Controller function for creating a user and user_auth in a transaction
-def create_user_controller(payload: dict, db: Session):
+def create_user_controller(payload: UserCreateRequest, db: Session)-> UserResponse:
     required_fields = ["role_id"]
     for field in required_fields:
         if field not in payload:

@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 from db.session import get_db
 from uuid import UUID
 
-user_router = APIRouter()
+user_router = APIRouter(tags=["Users"])
 
 @user_router.post("/users", response_model=UserResponse)
-def create_user_route(payload: dict, db: Session = Depends(get_db)):
+def create_user_route(payload: UserCreateRequest, db: Session = Depends(get_db)) -> UserResponse:
     return create_user_controller(payload, db)
 
 @user_router.get("/users/{user_id}", response_model=UserResponse)

@@ -10,6 +10,8 @@ class UserCreateRequest(BaseModel):
     city: Optional[str] = None
     gst_number: Optional[str] = None
     role_id: UUID
+    user_name: Optional[str] = None
+    password: Optional[str] = None
 
     def validate(self):
         if not self.name and not self.company_name:

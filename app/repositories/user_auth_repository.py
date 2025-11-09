@@ -15,6 +15,5 @@ class UserAuthRepository:
     def create(self, **kwargs):
         user_auth = UserAuth(**kwargs)
         self.db.add(user_auth)
-        self.db.commit()
-        self.db.refresh(user_auth)
+        self.db.flush()  # Ensure PK is assigned
         return user_auth

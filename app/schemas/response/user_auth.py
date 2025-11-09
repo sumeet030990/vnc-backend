@@ -6,5 +6,4 @@ class UserAuthResponse(BaseModel):
     user_id: UUID
     user_name: str
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}

@@ -7,4 +7,5 @@ class ItemResponse(BaseModel):
     slug: str
 
     class Config:
-        orm_mode = True
+      from_attributes = True
+

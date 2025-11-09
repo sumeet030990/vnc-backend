@@ -2,8 +2,8 @@
 from fastapi import FastAPI
 from routes.role_routes import role_router
 from routes.item_routes import item_router
-from routes.user_routes import user_router
 from routes.user_auth_routes import user_auth_router
+from routes.user_routes import user_router
 
 app = FastAPI()
 

@@ -10,9 +10,8 @@ class UserRepository:
     def get_by_id(self, user_id: UUID):
         return self.db.query(User).filter(User.id == user_id).first()
 
-    def create(self, **kwargs):
-        user = User(**kwargs)
+    def create(self, user_fields):
+        user = User(**user_fields)
         self.db.add(user)
-        self.db.commit()
-        self.db.refresh(user)
+        self.db.flush()  # Ensure PK is assigned
         return user

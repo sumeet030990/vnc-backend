@@ -3,5 +3,5 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-db/alembic/versions/
+alembic/versions/
 .venv

@@ -2,9 +2,9 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.schemas.response.globalResponse import ErrorResponse, SuccessResponse
 from app.schemas.response.user import UserResponseBody
+from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 from app.services.user_auth_service import UserAuthService
-from db.session import get_db
 from app.schemas.request.user import UserCreateRequest
 from uuid import UUID
 
@@ -16,9 +16,9 @@ class UserController:
         self.db = db
         self.user_service = UserService(db) if db else None
         self.user_auth_service = UserAuthService(db) if db else None
+        self.auth_service = AuthService()
 
     def store_user(self, payload: UserCreateRequest):
-        print("Payload received for user creation:", payload)
         required_fields = ["role_id"]
         for field in required_fields:
             print(f"Checking field: {field}")
@@ -41,10 +41,11 @@ class UserController:
                 user = self.user_service.create_user(user_fields)
 
                 if payload_dict.get("user_name") and payload_dict.get("password"):
+                    hashed_password = self.auth_service.hash_password(payload_dict["password"])
                     self.user_auth_service.create_user_auth(
                         user_id=user.id,
                         user_name=payload_dict["user_name"],
-                        password=payload_dict["password"]
+                        password=hashed_password
                     )
 
                 return UserResponse(data=UserResponseBody.model_validate(user))

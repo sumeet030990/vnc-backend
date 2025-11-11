@@ -17,4 +17,7 @@ class UserResponseBody(BaseModel):
 
     model_config = {"from_attributes": True}
 
+class UserWithUserAuthResponse(UserResponseBody):
+    user_name: str
+
 

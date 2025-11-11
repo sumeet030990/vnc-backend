@@ -1,14 +1,14 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.schemas.response.globalResponse import ErrorResponse, SuccessResponse
-from app.schemas.response.user import UserResponseBody
+from app.schemas.response.user import UserWithUserAuthResponse
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 from app.services.user_auth_service import UserAuthService
 from app.schemas.request.user import UserCreateRequest
 from uuid import UUID
 
-UserResponse = SuccessResponse[UserResponseBody]
+UserResponse = SuccessResponse[UserWithUserAuthResponse]
 
 # Controller class for user operations
 class UserController:
@@ -48,7 +48,7 @@ class UserController:
                         password=hashed_password
                     )
 
-                return UserResponse(data=UserResponseBody.model_validate(user))
+                return UserResponse(data=UserWithUserAuthResponse.model_validate(user))
         except Exception as e:
                 raise HTTPException(
                     status_code=500,
@@ -62,6 +62,6 @@ class UserController:
                 status_code=404,
                 detail=ErrorResponse(status=404, data="User not found").model_dump()
             )
-        return UserResponse(data=UserResponseBody.model_validate(user))
+        return UserResponse(data=UserWithUserAuthResponse.model_validate(user))
 
 

@@ -56,6 +56,15 @@ be/
 - **.env / .env.example**: Environment variable files.
 - **README.md**: Project documentation.
 
+
+## Starting the Backend Server
+
+To start the backend server in development mode, run the following command from the project root:
+
+```
+uvicorn main:app --reload
+```
+
 ## Alembic Migration Commands
 
 ### Generate a new migration (revision) file
@@ -86,4 +95,12 @@ alembic current
 ### Show migration history
 ```
 alembic history
+```
+
+## Database Seeding
+
+To run all seeders and populate the database with initial data, use the following command from the project root:
+
+```
+python -m db.seeders.seed
 ```

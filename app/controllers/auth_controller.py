@@ -1,9 +1,9 @@
 
 from fastapi import Depends
-from app.schemas.response.auth import AccessToken
+from app.schemas.auth import AccessToken
 from app.services.auth_service import AuthService
 from sqlalchemy.orm import Session
-from app.schemas.request.auth import LoginAuthRequest
+from app.schemas.auth import LoginAuthRequest
 
 class AuthController:
     def __init__(self, db: Session):

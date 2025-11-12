@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from app.schemas.response.auth import AccessToken
-from app.schemas.response.globalResponse import ErrorResponse
-from app.schemas.request.auth import LoginAuthRequest
+from app.schemas.auth import AccessToken
+from app.schemas.globalResponse import ErrorResponse
+from app.schemas.auth import LoginAuthRequest
 from sqlalchemy.orm import Session
 from db.session import get_db
 from app.controllers.auth_controller import AuthController

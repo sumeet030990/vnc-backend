@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
 from app.controllers.user_controller import UserController
-from app.schemas.response.globalResponse import SuccessResponse, ErrorResponse
-from app.schemas.response.user import  UserWithUserAuthResponse
-from app.schemas.request.user import UserCreateRequest
+from app.schemas.globalResponse import SuccessResponse, ErrorResponse
+from app.schemas.user import  UserWithUserAuthResponse, UserCreateRequest
 from sqlalchemy.orm import Session
 from db.session import get_db
 from uuid import UUID

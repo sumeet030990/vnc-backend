@@ -1,11 +1,10 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app.schemas.response.globalResponse import ErrorResponse, SuccessResponse
-from app.schemas.response.user import UserWithUserAuthResponse
+from app.schemas.globalResponse import ErrorResponse, SuccessResponse
+from app.schemas.user import UserWithUserAuthResponse, UserCreateRequest
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 from app.services.user_auth_service import UserAuthService
-from app.schemas.request.user import UserCreateRequest
 from uuid import UUID
 
 UserResponse = SuccessResponse[UserWithUserAuthResponse]

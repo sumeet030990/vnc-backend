@@ -2,11 +2,11 @@
 from dotenv import load_dotenv
 from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
-from app.schemas.request.auth import LoginAuthRequest
+from app.schemas.auth import LoginAuthRequest
 from app.repositories.user_auth_repository import UserAuthRepository
 from app.repositories.user_repository import UserRepository
-from app.schemas.response.user import UserResponseBody
-from app.schemas.response.auth import AccessToken, UserWithUserAuthResponse
+from app.schemas.user import UserResponseBody
+from app.schemas.auth import AccessToken, UserWithUserAuthResponse
 import jwt
 from datetime import datetime, timedelta, timezone
 from typing import Optional

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from uuid import UUID
-
+from app.schemas.role import RoleResponse
 class UserCreateRequest(BaseModel):
     name: Optional[str] = None
     company_name: Optional[str] = None
@@ -42,3 +42,4 @@ class UserResponseBody(BaseModel):
 
 class UserWithUserAuthResponse(UserResponseBody):
     user_name: str
+    role: RoleResponse

@@ -12,7 +12,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from fastapi import HTTPException
 import os
-import uuid
+from app.utils.helper_functions import convert_uuids
 
 load_dotenv()  # Load environment variables from .env file
 SECRET_KEY = os.getenv("SECRET_KEY")  # Replace with your actual secret key
@@ -54,17 +54,17 @@ class AuthService:
 			raise HTTPException(status_code=401, detail="Invalid username or password")
 
 		user = self.user_repo.get_by_id(user_auth.user_id)
-		print(f"type(user): {type(user)}")
 		access_token_expires = timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
 
-		user_data = UserWithUserAuthResponse(**UserResponseBody.model_validate(user).model_dump(),user_name=user_auth.user_name).model_dump()
+		# Add role to user_data
+		role = user.role  # SQLAlchemy relationship
+		user_data = UserWithUserAuthResponse(
+			**UserResponseBody.model_validate(user).model_dump(),
+			user_name=user_auth.user_name,
+			role=role
+		).model_dump()
   
-		print(f"type(user_data): {(user_data)}")
-  
-		# Convert UUIDs to strings for JSON serialization
-		for k, v in user_data.items():
-			if isinstance(v, uuid.UUID):
-				user_data[k] = str(v)
+		user_data = convert_uuids(user_data)
 		access_token = self.create_access_token(
 			data={
 				"user": user_data,

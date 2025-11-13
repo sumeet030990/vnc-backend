@@ -6,6 +6,7 @@ from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 from app.services.user_auth_service import UserAuthService
 from uuid import UUID
+from app.schemas.user import UserResponseBody
 
 UserResponse = SuccessResponse[UserWithUserAuthResponse]
 
@@ -15,7 +16,7 @@ class UserController:
         self.db = db
         self.user_service = UserService(db) if db else None
         self.user_auth_service = UserAuthService(db) if db else None
-        self.auth_service = AuthService()
+        self.auth_service = AuthService(db)
 
     def store_user(self, payload: UserCreateRequest):
         required_fields = ["role_id"]
@@ -54,13 +55,21 @@ class UserController:
                     detail=ErrorResponse(status=500, data=f"User creation failed: {str(e)}").model_dump()
                 )
 
-    def show_user(self, user_id: UUID):
+    def show_user(self, user_id: UUID, current_user) -> UserResponse:
         user = self.user_service.get_user(user_id)
-        if not user:
+        # Add role to user_data
+        role = user.role  # SQLAlchemy relationship
+        user_data = UserWithUserAuthResponse(
+			**UserResponseBody.model_validate(user).model_dump(),
+			user_name=current_user["user_name"],
+			role=role
+		).model_dump()
+  
+        if not user_data:
             raise HTTPException(
                 status_code=404,
                 detail=ErrorResponse(status=404, data="User not found").model_dump()
             )
-        return UserResponse(data=UserWithUserAuthResponse.model_validate(user))
+        return UserResponse(data=UserWithUserAuthResponse.model_validate(user_data))
 
 

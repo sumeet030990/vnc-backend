@@ -1,4 +1,5 @@
 
+import token
 from dotenv import load_dotenv
 from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
@@ -13,6 +14,9 @@ from typing import Optional
 from fastapi import HTTPException
 import os
 from app.utils.helper_functions import convert_uuids
+
+from fastapi.security import OAuth2PasswordBearer
+
 
 load_dotenv()  # Load environment variables from .env file
 SECRET_KEY = os.getenv("SECRET_KEY")  # Replace with your actual secret key
@@ -74,3 +78,6 @@ class AuthService:
 
 		# Return user info (and token if needed)
 		return AccessToken.model_validate({"access_token": access_token, "user": user_data})
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+

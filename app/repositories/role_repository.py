@@ -6,6 +6,9 @@ class RoleRepository:
     def __init__(self, db: Session):
         self.db = db
 
+    def get_all_roles(self):
+        return self.db.query(Role).all()
+    
     def get_by_id(self, role_id: UUID):
         return self.db.query(Role).filter(Role.id == role_id).first()
 

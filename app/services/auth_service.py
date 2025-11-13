@@ -20,9 +20,9 @@ from fastapi.security import OAuth2PasswordBearer
 
 load_dotenv()  # Load environment variables from .env file
 SECRET_KEY = os.getenv("SECRET_KEY")  # Replace with your actual secret key
+ALGORITHM = os.getenv("ALGORITHM")  # Replace with your desired algorithm
 ACCESS_TOKEN_EXPIRE_DAYS = int(os.getenv("ACCESS_TOKEN_EXPIRE_DAYS"))
 
-ALGORITHM = "HS256"  # Replace with your desired algorithm
 
 class AuthService:
 	"""Service for authentication-related utilities."""

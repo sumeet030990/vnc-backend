@@ -9,7 +9,6 @@ class RoleResponse(BaseModel):
     class Config:
         from_attributes = True
 
-
 class RoleCreateRequest(BaseModel):
     name: str
     slug: str

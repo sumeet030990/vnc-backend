@@ -11,20 +11,25 @@ from app.middlewares.auth import get_current_user
 
 user_router = APIRouter(tags=["Users"])
 
+@user_router.get("/users", response_model=SuccessResponse[list[UserWithUserAuthResponse]], responses={422: {"model":ErrorResponse}, 500: {"model": ErrorResponse}})
+def get_all_users(db: Session = Depends(get_db), current_user = Depends(get_current_user)) -> SuccessResponse[UserWithUserAuthResponse]:
+    user_controller = UserController(db)
+    
+    return user_controller.get_all_users()
+
 @user_router.post("/users", response_model=SuccessResponse[UserWithUserAuthResponse], responses={422: {"model":ErrorResponse}, 500: {"model": ErrorResponse}})
-def create_user_route(payload: UserCreateRequest, db: Session = Depends(get_db)) -> SuccessResponse[UserWithUserAuthResponse]:
+def create_user(payload: UserCreateRequest, db: Session = Depends(get_db), current_user = Depends(get_current_user)) -> SuccessResponse[UserWithUserAuthResponse]:
     user_controller = UserController(db)
     
     return user_controller.store_user(payload)
 
-from app.schemas.user import UserWithUserAuthResponse  # Assuming you have a User schema/model
 
 @user_router.get(
     "/users/{user_id}",
     response_model=SuccessResponse[UserWithUserAuthResponse],
     responses={404: {"model": ErrorResponse}}
 )
-def get_user_route(
+def show_user(
     user_id: UUID,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)

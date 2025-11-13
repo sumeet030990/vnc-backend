@@ -5,7 +5,7 @@ Project structure scaffolded.
 ## Project Folder Structure
 
 ```
-be/
+vnc-backend/
 ├── routes/                     # API route definitions (modularized by feature)
 ├── db/                         # Database models, session, migrations
 │   └── alembic/                # DB migrations (inside db)
@@ -56,6 +56,15 @@ be/
 - **.env / .env.example**: Environment variable files.
 - **README.md**: Project documentation.
 
+# Installation
+
+To install all required dependencies, run the following command in your terminal:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+This will install all the packages listed in `requirements.txt` using pip3.
 
 ## Starting the Backend Server
 

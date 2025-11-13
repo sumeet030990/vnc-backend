@@ -18,6 +18,25 @@ class UserController:
         self.user_auth_service = UserAuthService(db) if db else None
         self.auth_service = AuthService(db)
 
+    def get_all_users(self) -> SuccessResponse[list[UserWithUserAuthResponse]]:
+        users = self.user_service.get_all_users()
+        if not users:
+            raise HTTPException(
+                status_code=404,
+                detail="No users found."
+            )
+            
+        # Convert each user to UserWithUserAuthResponse
+        user_responses = [
+            UserWithUserAuthResponse(
+                **UserResponseBody.model_validate(user).model_dump(),
+                user_name=user.user_auth.user_name if user.user_auth else None,
+                role=user.role
+            )
+            for user in users
+        ]
+        return SuccessResponse(data=user_responses)
+    
     def store_user(self, payload: UserCreateRequest):
         required_fields = ["role_id"]
         for field in required_fields:

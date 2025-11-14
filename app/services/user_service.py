@@ -13,3 +13,9 @@ class UserService:
 
     def create_user(self, user_fields):
         return self.repo.create(user_fields)
+  
+    def update_user(self, user_id, user_fields):
+        return self.repo.update(user_id, user_fields)
+   
+    def delete_user(self, user_id):
+        return self.repo.delete(user_id)

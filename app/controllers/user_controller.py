@@ -40,7 +40,6 @@ class UserController:
     def store_user(self, payload: UserCreateRequest):
         required_fields = ["role_id"]
         for field in required_fields:
-            print(f"Checking field: {field}")
             if getattr(payload, field, None) is None:
                 raise HTTPException(
                     status_code=422,
@@ -55,19 +54,25 @@ class UserController:
             with self.db.begin():
                 payload_dict = payload.model_dump()
                 user_fields = {key: value for key, value in payload_dict.items() if key not in ["user_name", "password"]}
-                if "company_name" in user_fields:
-                    user_fields["company_name"] = user_fields.pop("company_name")
+               
                 user = self.user_service.create_user(user_fields)
 
                 if payload_dict.get("user_name") and payload_dict.get("password"):
                     hashed_password = self.auth_service.hash_password(payload_dict["password"])
-                    self.user_auth_service.create_user_auth(
+                    user_auth = self.user_auth_service.create_user_auth(
                         user_id=user.id,
                         user_name=payload_dict["user_name"],
                         password=hashed_password
                     )
 
-                return UserResponse(data=UserWithUserAuthResponse.model_validate(user))
+                user_with_auth = UserWithUserAuthResponse(
+                    **UserResponseBody.model_validate(user).model_dump(),
+                    user_name=user_auth.user_name if user_auth else None,
+                    role=user.role
+                )
+                
+
+                return UserResponse(data=user_with_auth)
         except Exception as e:
                 raise HTTPException(
                     status_code=500,
@@ -92,3 +97,52 @@ class UserController:
         return UserResponse(data=UserWithUserAuthResponse.model_validate(user_data))
 
 
+    def update_user(self, user_id: UUID, payload: UserCreateRequest, current_user) -> UserResponse:
+        required_fields = ["role_id"]
+        for field in required_fields:
+            if getattr(payload, field, None) is None:
+                raise HTTPException(
+                    status_code=422,
+                    detail=ErrorResponse(status=422, data=f"Missing required field: {field}").model_dump()
+                )
+        if not getattr(payload, "name", None) and not getattr(payload, "company_name", None):
+                raise HTTPException(
+                    status_code=422,
+                    detail=ErrorResponse(status=422, data="Either name or company_name must be provided.").model_dump()
+                )
+        try:
+            with self.db.begin():
+                payload_dict = payload.model_dump()
+                user_fields = {key: value for key, value in payload_dict.items() if key not in ["user_name", "password"]}
+               
+                user = self.user_service.update_user(user_id, user_fields)
+
+                if payload_dict.get("user_name"):
+                    user_auth = self.user_auth_service.update_user_name(
+                        user_id=user.id,
+                        user_name=payload_dict["user_name"],
+                    )
+
+                    user_with_auth = UserWithUserAuthResponse(
+                        **UserResponseBody.model_validate(user).model_dump(),
+                        user_name=user_auth.user_name if user_auth else None,
+                        role=user.role
+                    )
+                    
+                return UserResponse(data=user_with_auth)
+        except Exception as e:
+                raise HTTPException(
+                    status_code=500,
+                    detail=ErrorResponse(status=500, data=f"User creation failed: {str(e)}").model_dump()
+                )
+
+    def delete_user(self, user_id: UUID) -> SuccessResponse:
+        try:
+            with self.db.begin():
+                user = self.user_service.delete_user(user_id)
+                return SuccessResponse(data={"message": "User deleted successfully."})
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=ErrorResponse(status=500, data=f"User deletion failed: {str(e)}").model_dump()
+            )

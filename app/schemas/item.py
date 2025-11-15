@@ -3,13 +3,9 @@ from uuid import UUID
 from typing import Optional
 
 
-class ItemCreateRequest(BaseModel):
+class ItemUpsertRequest(BaseModel):
     name: str
     slug: str
-
-class ItemUpdateRequest(BaseModel):
-    name: Optional[str] = None
-    slug: Optional[str] = None
 
 
 class ItemResponse(BaseModel):

@@ -4,7 +4,7 @@ import uuid
 
 def seed_items(session: Session):
     items = [
-        {"name": "Toor Dall", "slug": "toor-dall"},
+        {"name": "Toor Dall", "slug": "toor_dall"},
     ]
     for item in items:
         exists = session.query(Item).filter_by(slug=item["slug"]).first()

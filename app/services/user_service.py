@@ -1,3 +1,4 @@
+from uuid import UUID
 from app.repositories.user_repository import UserRepository
 from sqlalchemy.orm import Session
 
@@ -8,7 +9,10 @@ class UserService:
     def get_all_users(self):
         return self.repo.get_all_users()
     
-    def get_user(self, user_id):
+    def get_users_by_role(self, role_id: UUID):
+        return self.repo.get_users_by_role(role_id)
+    
+    def get_user(self, user_id: UUID):
         return self.repo.get_by_id(user_id)
 
     def create_user(self, user_fields):

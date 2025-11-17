@@ -50,6 +50,21 @@ def show_user(
     user_controller = UserController(db)
     return user_controller.show_user(user_id, current_user)
 
+@user_router.get(
+    "/users/role/{role_id}",
+    response_model=SuccessResponse[list[UserWithUserAuthResponse]],
+    responses={404: {"model": ErrorResponse}},
+    summary="Get Users by Role",
+    description="Get users by their role ID. Returns user details including role and authentication info."
+)
+def get_users_by_role(
+    role_id: UUID,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+) -> SuccessResponse[list[UserWithUserAuthResponse]]:
+    user_controller = UserController(db)
+    return user_controller.get_users_by_role(role_id, current_user)
+
 @user_router.put(
     "/users/{user_id}",
     response_model=SuccessResponse[UserWithUserAuthResponse],

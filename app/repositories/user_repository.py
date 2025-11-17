@@ -11,6 +11,9 @@ class UserRepository:
    
     def get_by_id(self, user_id: UUID):
         return self.db.query(User).filter(User.id == user_id).first()
+   
+    def get_users_by_role(self, role_id: UUID):
+        return self.db.query(User).filter(User.role_id == role_id).all()
 
     def create(self, user_fields):
         user = User(**user_fields)

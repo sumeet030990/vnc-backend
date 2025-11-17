@@ -95,6 +95,25 @@ class UserController:
                 detail=ErrorResponse(status=404, data="User not found").model_dump()
             )
         return UserResponse(data=UserWithUserAuthResponse.model_validate(user_data))
+    
+    def get_users_by_role(self, role_id: UUID, current_user) -> SuccessResponse[list[UserWithUserAuthResponse]]:
+        users = self.user_service.get_users_by_role(role_id)
+        if not users:
+            raise HTTPException(
+                status_code=404,
+                detail="No users found for this role."
+            )
+        # Convert each user to UserWithUserAuthResponse
+        user_responses = [
+            UserWithUserAuthResponse(
+                **UserResponseBody.model_validate(user).model_dump(),
+                user_name=user.user_auth.user_name if user.user_auth else None,
+                role=user.role
+            )
+            for user in users
+        ]
+        return SuccessResponse(data=user_responses)
+
 
 
     def update_user(self, user_id: UUID, payload: UserCreateRequest, current_user) -> UserResponse:

@@ -2,7 +2,6 @@ from fastapi import APIRouter
 from app.controllers.role_controller import RoleController
 from app.schemas.globalResponse import SuccessResponse, ErrorResponse
 from app.schemas.role import RoleResponse
-from uuid import UUID
 from app.middlewares.auth import get_current_user
 from db.session import get_db
 from sqlalchemy.orm import Session
